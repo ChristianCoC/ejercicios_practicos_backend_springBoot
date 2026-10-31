@@ -13,9 +13,9 @@ public class ProductService {
     private int contadorId = 1;
 
     public ProductService() {
-        guardar(new Producto(0, "Café Espreo", 2500.0, 50));
-        guardar(new Producto(1, "Te Verde", 1800.0, 30));
-        guardar(new Producto(2, "Alfajor Artesanal", 1200.0, 100));
+        guardar(new Producto(0, "Café Espreo", 2500.0, 50, "Bebidas"));
+        guardar(new Producto(1, "Te Verde", 1800.0, 30, "Bebidas"));
+        guardar(new Producto(2, "Alfajor Artesanal", 1200.0, 100, "Snacks" ));
     }
 
     public List<Producto> listarTodos() {
