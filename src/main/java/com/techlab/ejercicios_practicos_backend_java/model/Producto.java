@@ -1,17 +1,30 @@
 package com.techlab.ejercicios_practicos_backend_java.model;
 
 public class Producto {
+    private Integer id;
     private String nombre;
     private double precio;
     private int stock;
 
-    public Producto(String nombre, double precio, int stock) {
+    public Producto() {
+    }
+
+    public Producto(Integer id, String nombre, double precio, int stock) {
+        this.id = id;
         this.nombre = nombre;
         this.precio = precio;
         this.stock = stock;
     }
 
     // Getters and setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getNombre() {
         return nombre;
     }

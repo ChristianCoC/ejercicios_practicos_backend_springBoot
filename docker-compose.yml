@@ -1,0 +1,16 @@
+services:
+  postgres-db:
+    image: postgres:17-alpine
+    container_name: techlab-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: techlab_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
