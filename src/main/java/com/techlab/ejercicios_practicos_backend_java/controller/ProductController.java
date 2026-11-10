@@ -18,7 +18,10 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Producto> listarProductos() {
+    public List<Producto> listarProductos(@RequestParam (required = false) String nombre) {
+        if (nombre != null && !nombre.isBlank()) {
+            return productService.buscarPorNombre(nombre);
+        }
         return productService.listarTodos();
     }
 

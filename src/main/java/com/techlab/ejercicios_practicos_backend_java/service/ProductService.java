@@ -1,38 +1,30 @@
 package com.techlab.ejercicios_practicos_backend_java.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import com.techlab.ejercicios_practicos_backend_java.model.Producto;
+import com.techlab.ejercicios_practicos_backend_java.repository.ProductRepository;
 
-@Service 
+@Service
 public class ProductService {
 
-    private final List<Producto> productos = new ArrayList<>();
-    private int contadorId = 1;
+    private final ProductRepository repo;
 
-    public ProductService() {
-        guardar(new Producto(0, "Café Espreo", 2500.0, 50, "Bebidas"));
-        guardar(new Producto(1, "Te Verde", 1800.0, 30, "Bebidas"));
-        guardar(new Producto(2, "Alfajor Artesanal", 1200.0, 100, "Snacks" ));
+    public ProductService(ProductRepository repo) {
+        this.repo = repo;
     }
 
     public List<Producto> listarTodos() {
-        return productos;
+        return repo.findAll();
     }
 
     public Producto obtenerPorId(int id) {
-        return productos.stream()
-                .filter(producto -> producto.getId() != null && producto.getId() == id)
-                .findFirst()
-                .orElse(null);
+        return repo.findById(id).orElse(null);
     }
 
     public Producto guardar(Producto p) {
-        p.setId(contadorId++);
-        productos.add(p);
-        return p;
+        return repo.save(p);
     }
 
     public Producto actualizar(int id, Producto datos) {
@@ -41,11 +33,22 @@ public class ProductService {
             p.setNombre(datos.getNombre());
             p.setPrecio(datos.getPrecio());
             p.setStock(datos.getStock());
+            p.setDescripcion(datos.getDescripcion());
+            p.setCategoria(datos.getCategoria());
+            return repo.save(p);
         }
-        return p;
+        return null;
     }
 
     public boolean eliminar(int id) {
-        return productos.removeIf(p -> p.getId() != null && p.getId() == id);
+        if (repo.existsById(id)) {
+            repo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    public List<Producto> buscarPorNombre(String nombre) {
+        return repo.findByNombre(nombre);
     }
 }
