@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>TechLab - Catálogo Sibelius</title>
+  <style>
+    body { font-family: sans-serif; margin: 30px; background-color: #f7f9fa; }
+    h1 { color: #1a202c; }
+    .btn { background-color: #3182ce; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background-color: #2b6cb0; }
+    .grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+    .card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; width: 260px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .badge { background: #edf2f7; color: #4a5568; font-size: 12px; padding: 3px 8px; border-radius: 4px; }
+    .error-box { margin-top: 20px; padding: 12px; background-color: #fed7d7; color: #9b2c2c; border-radius: 6px; display: none; }
+  </style>
+</head>
+<body>
+
+  <h1>Catálogo Gourmet - TechLab</h1>
+  
+  <button class="btn" onclick="cargarCatalogo()">🔄 Refrescar Catálogo</button>
+  <button class="btn" style="background-color: #718096;" onclick="probarProductoInexistente()">⚠️ Probar ID Inexistente (9999)</button>
+
+  <div id="mensajeError" class="error-box"></div>
+  <div id="catalogo" class="grid"></div>
+
+  <script>
+    const API_URL = "http://localhost:9090/productos";
+
+    async function cargarCatalogo() {
+      const errorDiv = document.getElementById("mensajeError");
+      errorDiv.style.display = "none";
+      const contenedor = document.getElementById("catalogo");
+      contenedor.innerHTML = "<p>Cargando productos...</p>";
+
+      try {
+        const respuesta = await fetch(API_URL);
+        if (!respuesta.ok) {
+          throw new Error("Error al obtener productos: " + respuesta.status);
+        }
+        const productos = await respuesta.json();
+        
+        contenedor.innerHTML = "";
+        if (productos.length === 0) {
+          contenedor.innerHTML = "<p>No hay productos en stock.</p>";
+          return;
+        }
+
+        productos.forEach(p => {
+          contenedor.innerHTML += `
+            <div class="card">
+              <span class="badge">${p.categoria || 'Sin categoría'}</span>
+              <h3>${p.nombre}</h3>
+              <p>${p.descripcion || 'Sin descripción'}</p>
+              <p><strong>Precio:</strong> $${p.precio}</p>
+              <p><strong>Stock:</strong> ${p.stock} unid.</p>
+            </div>
+          `;
+        });
+      } catch (err) {
+        errorDiv.innerText = "Error de comunicación con el servidor: " + err.message;
+        errorDiv.style.display = "block";
+      }
+    }
+
+    async function probarProductoInexistente() {
+      const errorDiv = document.getElementById("mensajeError");
+      try {
+        const respuesta = await fetch(API_URL + "/9999");
+        if (respuesta.status === 404) {
+          const mensaje = await respuesta.text();
+          errorDiv.innerText = "Aviso del servidor (404): " + mensaje;
+          errorDiv.style.display = "block";
+        }
+      } catch (err) {
+        errorDiv.innerText = "Error de red: " + err.message;
+        errorDiv.style.display = "block";
+      }
+    }
+
+    // Cargar automáticamente al abrir la página
+    cargarCatalogo();
+  </script>
+</body>
+</html>
